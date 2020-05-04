@@ -14,10 +14,10 @@ async def shutdown():
     app.database.close() 
 
 
-@app.get('/path')
+@app.get('/track')
 async def list_of_objects(int = 0, per_page: int = 10):
 	app.database.row_factory = sqlite3.Row 
-	path = app.database.execute[
+	tracks = app.database.execute[
         {
             "TrackId": int,
             "Name": str,
@@ -30,4 +30,4 @@ async def list_of_objects(int = 0, per_page: int = 10):
             "UnitPrice": float 
 	}
         ].fetchall() 
-	return path
+	return tracks
