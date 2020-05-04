@@ -1,0 +1,88 @@
+SQLite format 3   @       `           "                                                  -â   Ý    űöńěçâÝ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        	      	         
+Á    8űöńëĺßŮÓÍÇÁ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  6‚S   5‚>   4‚)   3‚   1r   0R   /,   ,
+   +g   *D   )#
+w 
+L¦ďŘjË˛[L‘‚                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+invoicesś
+customers;
+albums[Á 
+       
+playlists	'invoice_itemsŔ
+genres
+employeesć 
+      
+tracks
+Żartists   	     #media_types   Ř    (űöđęäŢŘ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 '‚    &j   %W   $9   #
+   "Y   !0   â   ťűöńěçâ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ś2  ›)  š   ™    —
+s j ú!j                                                                                                                                                                                                                                                                                                                                                            
+qtableartistsartistsCREATE TABLE "artists"
+(
+    [ArtistId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [Name] NVARCHAR(120)
+)‚$„#tablealbumsalbumsCREATE TABLE "albums"
+(
+    [AlbumId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [Title] NVARCHAR(160)  NOT NULL,
+    [ArtistId] INTEGER  NOT NULL,
+    FOREIGN KEY ([ArtistId]) REFERENCES "artists" ([ArtistId]) 
+		ON DELETE NO ACTION ON UPDATE NO ACTION
+)P++Ytablesqlite_sequencesqlite_sequenceCREATE TABLE sqlite_sequence(name,seq)   Ť                                                                                                                                         
+   › ›                                                                                                                                                                                                                                                                                                                                                                                                                 „b‰tablecustomerscustomersCREATE TABLE "customers"
+(
+    [CustomerId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [FirstName] NVARCHAR(40)  NOT NULL,
+    [LastName] NVARCHAR(20)  NOT NULL,
+    [Company] NVARCHAR(80),
+    [Address] NVARCHAR(70),
+    [City] NVARCHAR(40),
+    [State] NVARCHAR(40),
+    [Country] NVARCHAR(40),
+    [PostalCode] NVARCHAR(10),
+    [Phone] NVARCHAR(24),
+    [Fax] NVARCHAR(24),
+    [Email] NVARCHAR(60)  NOT NULL,
+    [SupportRepId] INTEGER,
+    FOREIGN KEY ([SupportRepId]) REFERENCES "employees" ([EmployeeId]) 
+		ON DELETE NO ACTION ON UPDATE NO ACTION
+)   ű   –ű                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               •
+w  c  ď c                                                                                       	mtablegenresgenres
+CREATE TABLE "genres"
+(
+    [GenreId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [Name] NVARCHAR(120)
+)…‰YtableemployeesemployeesCREATE TABLE "employees"
+(
+    [EmployeeId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [LastName] NVARCHAR(20)  NOT NULL,
+    [FirstName] NVARCHAR(20)  NOT NULL,
+    [Title] NVARCHAR(30),
+    [ReportsTo] INTEGER,
+    [BirthDate] DATETIME,
+    [HireDate] DATETIME,
+    [Address] NVARCHAR(70),
+    [City] NVARCHAR(40),
+    [State] NVARCHAR(40),
+    [Country] NVARCHAR(40),
+    [PostalCode] NVARCHAR(10),
+    [Phone] NVARCHAR(24),
+    [Fax] NVARCHAR(24),
+    [Email] NVARCHAR(60),
+    FOREIGN KEY ([ReportsTo]) REFERENCES "employees" ([EmployeeId]) 
+		ON DELETE NO ACTION ON UPDATE NO ACTION
+)   ‰                                                                                                                                     
+   Ł ÷îäÍ»±§ś”…vcSF0&őŕÖË»­Ł                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Opera Classical #Alternative	 Comedy Drama -Sci Fi & Fantasy
+ TV Shows +Science Fiction #Hip Hop/Rap World /Electronica/Dance
+ R&B/Soul
+ #Heavy Metal )Easy Listening
+
+ !Bossa Nova
+ !Soundtrack	 Pop	 Reggae Latin Blues 'Rock And Roll 1Alternative & Punk Metal Jazz Rock   ">   ÄűöńěçâÝŘÓÎČÂĽ¶°Ş¤ž’Ś†€ztnhb\VPJD>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Ă  Â  Á‚{  Ŕ‚p  ľ‚d  ˝‚Y  Ľ‚M  »‚A  ş‚5  ą‚)  ¸‚  ·‚  ¶‚  ´y  łm  ˛a  ±U  °I  Ż>  ®2  ­&  ¬  «  ¨  §x  ¦l  Ą`  ¤T  ŁH  ˘<  ˇ0   $  ź  ž
+   đ đ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      „
+‡mtableinvoicesinvoices
+CREATE TABLE "invoices"
+(
+    [InvoiceId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    [CustomerId] INTEGER  NOT NULL,
+    [InvoiceDate] DATETIME  NOT NULL,
+    [BillingAddress] NVARCHAR(70),
+    [BillingCity] NVARCHAR(40),
