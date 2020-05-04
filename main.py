@@ -15,7 +15,7 @@ async def shutdown():
 
 
 @app.get('/track')
-async def list_of_objects(int = 0, per_page: int = 10):
+async def list_of_objects(page: int = 0, per_page: int = 10):
 	app.database.row_factory = sqlite3.Row 
 	tracks = app.database.execute[
         {
