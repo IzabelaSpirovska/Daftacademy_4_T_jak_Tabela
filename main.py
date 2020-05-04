@@ -17,17 +17,7 @@ async def shutdown():
 @app.get('/track')
 async def list_of_objects(page: int = 0, per_page: int = 10):
 	app.database.row_factory = sqlite3.Row 
-	tracks = app.database.execute[
-        {
-            "TrackId": int,
-            "Name": str,
-            "AlbumId": int,
-            "MediaTypeId": int,
-            "GenreId": int,
-            "Composer": str,
-            "Milliseconds": int,
-            "Bytes": int,
-            "UnitPrice": float 
-	}
-        ].fetchall() 
+	tracks = app.database.execute(
+		f"SELECT * FROM tracks LIMIT {per_page} OFFSET {page*per_page}"
+		).fetchall() 
 	return tracks
