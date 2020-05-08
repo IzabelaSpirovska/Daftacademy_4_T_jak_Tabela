@@ -21,3 +21,14 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 		'SELECT * FROM tracks ORDER BY TrackId').fetchall() #pobieranie wszystkich krotek
 	current_tracks = tracks[per_page * page:per_page * (page+1)] 
 	return current_tracks
+
+
+@app.get('/tracks/composers')
+async def composers(composer_name: str = None):
+	app.db_connection.row_factory = sqlite3.Row
+	tracks = app.db_connection.execute(
+		'SELECT Name FROM tracks WHERE Composer = :composer_name ORDER BY Name',
+		{'composer_name': composer_name}).fetchall()
+	if not tracks:
+		raise HTTPException(status_code = 404, detail= {'Error': 'The composers are not in the database'})
+	return tracks
