@@ -30,5 +30,5 @@ async def composers(composer_name: str = None):
 		'SELECT Name FROM tracks WHERE Composer = :composer_name ORDER BY Name',
 		{'composer_name': composer_name}).fetchall()
 	if not tracks:
-		raise HTTPException(status_code = 404, detail= {'Error': 'The composers are not in the database'})
+		raise HTTPException(status_code = 404, detail = {'Error': 'The composers are not in the database'})
 	return tracks
