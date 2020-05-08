@@ -27,7 +27,7 @@ async def composers(composer_name: str = None):
 	app.db_connection.row_factory = sqlite3.Row
 	tracks = app.db_connection.execute(
 		'SELECT Name FROM tracks WHERE composer = :composer_name ORDER BY Name',
-		(composer_name)).fetchall()
+		{'composer_name': composer_name}).fetchall()
 	if not tracks:
 		raise HTTPException(status_code = 404, detail= 'error')
 	return tracks
