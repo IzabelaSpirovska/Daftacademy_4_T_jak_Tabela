@@ -28,7 +28,6 @@ async def composers(composer_name: str = None):
 	tracks = app.db_connection.execute(
 		'SELECT Name FROM tracks WHERE composer = :composer_name ORDER BY Name',
 		{'composer_name': composer_name}).fetchall()
-	if not tracks:
-		raise HTTPException(status_code = 404, detail= 'error')
+	if tracks is None:
+        raise HTTPException(status_code = 404, detail = {"error": "str"})
 	return tracks
-
