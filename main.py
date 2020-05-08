@@ -16,9 +16,9 @@ async def shutdown():
 
 @app.get('/tracks')
 async def list_of_objects(page: int = 0, per_page: int = 10):
-	app.db_connection.row_factory = sqlite3.Row #przekształcenie krotki w obiekt
+	app.db_connection.row_factory = sqlite3.Row
 	tracks = app.db_connection.execute(
-		'SELECT * FROM tracks ORDER BY TrackId').fetchall() #pobieranie wszystkich krotek
+		'SELECT * FROM tracks ORDER BY TrackId').fetchall()
 	current_tracks = tracks[per_page * page:per_page * (page+1)] 
 	return current_tracks
     
@@ -29,6 +29,6 @@ async def composers(composer_name: str = None):
 		'SELECT Name FROM tracks WHERE composer = :composer_name ORDER BY Name',
 		{'composer_name': composer_name}).fetchall()
 	if not tracks:
-		raise HTTPException(status_code = 404, detail= {'Error': 'The composers are not in the database'})
+		raise HTTPException(status_code = 404, detail= 'error')
 	return tracks
 
