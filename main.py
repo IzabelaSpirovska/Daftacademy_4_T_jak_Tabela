@@ -13,14 +13,22 @@ async def startup():
 async def shutdown():
     app.db_connection.close() 
 
+@app.get('/tracks')
+async def list_of_objects(page: int = 0, per_page: int = 10):
+    app.db_connection.row_factory = sqlite3.Row #przekształcenie krotki w obiekt
+    tracks = app.db_connection.execute(
+	    'SELECT * FROM tracks ORDER BY TrackId').fetchall() #pobieranie wszystkich krotek
+    current_tracks = tracks[per_page * page:per_page * (page+1)] 
+    return current_tracks
 
+'''
 @app.get('/tracks')
 async def list_of_objects(page: int = 0, per_page: int = 10):
 	app.db_connection.row_factory = sqlite3.Row 
 	current_tracks = app.db_connection.execute(
 		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId', {page: per_page, offset: per_page * page}).fetchall()
     	return current_tracks
-'''   
+  
 app.get('/tracks/composers/', status_code=200)
 async def composers(composer_name: str):
 	#app.db_connection.row_factory = lambda cursor, row : row[0]
