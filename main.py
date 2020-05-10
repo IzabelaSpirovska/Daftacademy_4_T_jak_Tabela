@@ -21,11 +21,11 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId', {page: per_page, offset: per_page * page}).fetchall()
     return current_tracks
     
-@app.get('/tracks/composers', status_code=200)
+@app.get('/tracks/composers/', status_code=200)
 async def composers(composer_name: str = None):
     app.db_connection.row_factory = sqlite3.Row
     tracks = app.db_connection.execute(
-	    'SELECT Name FROM tracks WHERE composer = :composer_name ORDER BY Name',
+	    'SELECT Name FROM tracks WHERE Composer = :composer_name ORDER BY Name',
 	    {'composer_name': composer_name}).fetchall()
     if tracks is None:
         raise HTTPException(status_code = 404, detail = {"error": "str"})
