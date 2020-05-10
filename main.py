@@ -20,7 +20,7 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 	    'SELECT * FROM tracks ORDER BY TrackId').fetchall()
     current_tracks = tracks[per_page * page:per_page * (page+1)] 
     return current_tracks
-
+'''
 class album_info(BaseModel):
 	title: str
 	artist_id: int = 1
@@ -75,7 +75,7 @@ async def create_album(album_rq: album_info):
 				
 	else:
 		raise HTTPException(status_code=404, detail= {"error": "ArtistId not in database"})
-		
+'''		
 
 '''
 @app.get('/tracks')
@@ -84,23 +84,26 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 	current_tracks = app.db_connection.execute(
 		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId', {page: per_page, offset: per_page * page}).fetchall()
     	return current_tracks
+'''
 
 
 @app.get('/tracks/composers/')
 async def composers(composer_name: str):
 	app.db_connection.row_factory = sqlite3.Row
-	data = app.db_connection.execute(
+	current_tracks = app.db_connection.execute(
 		"SELECT Name FROM tracks WHERE Composer= :composer_name ORDER BY Name",
 		{'composer_name': composer_name}).fetchall()
 
 	list = []
-	for i in list:
+	for elem in current_tracks:
 		list.append(elem["Name"])
 
 	if len(current_tracks) == 0:
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
 	return list
-	
+
+
+'''	
 app.get('/tracks/composers/', status_code=200)
 async def composers(composer_name: str):
 	#app.db_connection.row_factory = lambda cursor, row : row[0]
