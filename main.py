@@ -43,7 +43,7 @@ async def composers(composer_name: str):
 
 	if len(current_tracks) == 0:
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
-				    
+	return list
 ''' 
 app.get('/tracks/composers/', status_code=200)
 async def composers(composer_name: str):
