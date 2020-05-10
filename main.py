@@ -3,9 +3,29 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
+
+class album_data(BaseModel):
+	title: str
+	artist_id: int = 1
+
+class albums_entry:
+	AlbumId: int
+	Title: str
+	ArtistId: str
+
+class customer_data(BaseModel):
+	company: str 
+	address: str 
+	city: str 
+	state: str 
+	country: str 
+	postalcode: str 
+	fax: str 
+
 app = FastAPI()
 
 
+#--- TASK 1 -----------------------------------------------------------
 @app.on_event('startup')
 async def startup():
     app.db_connection = sqlite3.connect('chinook.db')
@@ -31,6 +51,8 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
     	return current_tracks
 '''
 
+
+#--- TASK 2 -----------------------------------------------------------
 @app.get('/tracks/composers/')
 async def composers(composer_name: str):
 	app.db_connection.row_factory = sqlite3.Row
@@ -47,25 +69,7 @@ async def composers(composer_name: str):
 	return list
 
 
-
-class album_data(BaseModel):
-	title: str
-	artist_id: int = 1
-
-class albums_entry:
-	AlbumId: int
-	Title: str
-	ArtistId: str
-
-class customer_data(BaseModel):
-	company: str = None
-	address: str = None
-	city: str = None
-	state: str = None
-	country: str = None
-	postalcode: str = None
-	fax: str = None
-
+#--- TASK 3 -----------------------------------------------------------
 @app.get('/albums/{album_id}')
 async def read_albums(album_id: int):
 	app.db_connection.row_factory = sqlite3.Row
@@ -82,8 +86,7 @@ async def create_album(album_rq: album_data):
 
 	if check_artist != None:
 
-		current_data = app.db_connection.execute("INSERT INTO albums (Title, ArtistId) VALUES (:title, :artistId)",
-			{"title": album_rq.title, "artistId": album_rq.artist_id})
+		current_data = app.db_connection.execute("INSERT INTO albums (Title, ArtistId) VALUES (:title, :artistId)", {"title": album_rq.title, "artistId": album_rq.artist_id})
 		app.db_connection.commit()
 		
 
@@ -91,15 +94,34 @@ async def create_album(album_rq: album_data):
 		app.db_connection.row_factory = sqlite3.Row
 		get_data = app.db_connection.execute("SELECT * FROM albums WHERE AlbumId=:new_album_id", {"new_album_id": new_album_id}).fetchall()
 
-		temp = albums_entry()
+		extract = albums_entry()
 		for elem in get_data:
-			temp.AlbumId = elem["AlbumId"]
-			temp.Title = elem["Title"]
-			temp.ArtistId = elem["ArtistId"]
+			extract.AlbumId = elem["AlbumId"]
+			extract.Title = elem["Title"]
+			extract.ArtistId = elem["ArtistId"]
 
 		if get_data != None:
-			return JSONResponse (status_code = 201, content = {"AlbumId": temp.AlbumId, "Title": temp.Title, "ArtistId": temp.ArtistId})
+			return JSONResponse (status_code = 201, content = {"AlbumId": extract.AlbumId, "Title": extract.Title, "ArtistId": extract.ArtistId})
 				
 	else:
-		raise HTTPException ( status_code = 404, detail= {"error": "Not found."})
+		raise HTTPException (status_code = 404, detail= {"error": "Not found."})
+
+
+#--- TASK 4 -----------------------------------------------------------
+@app.put('/customers/{customer_id}')
+async def edit_customer(customer_id: int, edit_rq: customer_data):
+	app.db_connection.row_factory = sqlite3.Row
+
+	check_customer = app.db_connection.execute("SELECT FirstName FROM customers WHERE CustomerId=:customer_id", {"customer_id": customer_id}).fetchone()
+	if check_customer != None:
+		search = {k: v for k, v in edit_rq.__dict__.items() if v is not None}
+		for key, value in search.items():
+			dummy_key = key.capitalize()
+			sql_command = "UPDATE customers SET " + str(dummy_key) + " = '" + str(value) + "' WHERE CustomerID = " + str(customer_id)
+			edit = app.db_connection.execute(sql_command)
+			app.db_connection.commit()
+		current_command = app.db_connection.execute("SELECT * FROM customers WHERE CustomerId=:customer_id", {"customer_id": customer_id}).fetchone()
+		return current_command
+	else:
+		raise HTTPException (status_code=404, detail= {"error": "Not found."}
 		
