@@ -1,6 +1,7 @@
 import sqlite3
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -45,7 +46,8 @@ async def composers(composer_name: str):
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
 	return list
 
-'''
+
+
 class album_data(BaseModel):
 	title: str
 	artist_id: int = 1
@@ -96,8 +98,8 @@ async def create_album(album_rq: album_data):
 			temp.ArtistId = elem["ArtistId"]
 
 		if get_data != None:
-			return JSONResponse(status_code=201, content = {"AlbumId": temp.AlbumId, "Title": temp.Title, "ArtistId": temp.ArtistId})
+			return JSONResponse (status_code = 201, content = {"AlbumId": temp.AlbumId, "Title": temp.Title, "ArtistId": temp.ArtistId})
 				
 	else:
-		raise HTTPException(status_code=404, detail= {"error": "Not found."})
-'''		
+		raise HTTPException ( status_code = 404, detail= {"error": "Not found."})
+		
