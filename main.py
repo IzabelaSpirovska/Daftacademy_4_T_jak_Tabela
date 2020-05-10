@@ -146,6 +146,6 @@ async def get_sales(category: str):
 		current_sales = app.db_connection.execute(
 			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()
 		return current_sales
-	if category not in ['customers','genres']:
+	if category not in 'genres':
 		raise HTTPException (status_code=404, detail= {"error": "Not found."})
 	
