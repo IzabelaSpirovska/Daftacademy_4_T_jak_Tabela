@@ -22,11 +22,12 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
     	return current_tracks
     
 app.get('/tracks/composers/', status_code=200)
-async def composers(composer_name: str = None):
+async def composers(composer_name: str):
+	#app.db_connection.row_factory = lambda cursor, row : row[0]
 	app.db_connection.row_factory = sqlite3.Row
 	current_tracks = app.db_connection.execute(
 		'SELECT Name FROM tracks WHERE Composer =:composer_name ORDER BY Name', {'composer_name': composer_name}).fetchall()
-	if not current_tracks:
+	if len(current_tracks) <=0 :
 		raise HTTPException(status_code=404, detail={"error": "Not Found"})
     	return current_tracks
 
