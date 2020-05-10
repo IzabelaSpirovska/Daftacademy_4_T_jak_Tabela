@@ -126,26 +126,19 @@ async def edit_customer(customer_id: int, edit_rq: customer_data):
 		raise HTTPException (status_code=404, detail= {"error": "Not found."})
 		
 		
-#--- TASK 5 -----------------------------------------------------------
+#--- TASK 5 & 6 -----------------------------------------------------------
 @app.get('/sales')
 async def get_sales(category: str):
+	app.db_connection.row_factory = sqlite3.Row
+	current_sales = None
 	if category == 'customers':
-		app.db_connection.row_factory = sqlite3.Row
 		current_sales = app.db_connection.execute(
 			"SELECT customers.CustomerId, customers.Email, customers.Phone, ROUND(SUM(invoices.Total),4) as Sum FROM invoices INNER JOIN customers ON invoices.CustomerId = customers.CustomerId GROUP BY customers.CustomerId ORDER BY Sum DESC").fetchall()
 		return current_sales
-	if category not in 'customers':
-		raise HTTPException (status_code=404, detail= {"error": "Not found."})
-
-
-#--- TASK 6 -----------------------------------------------------------
-@app.get('/sales')
-async def get_sales(category: str):
-	if category == 'genres':
-		app.db_connection.row_factory = sqlite3.Row
+	elif category == 'genres':
 		current_sales = app.db_connection.execute(
 			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()
-		return current_sales
-	if category not in 'genres':
-		raise HTTPException (status_code=404, detail= {"error": "Not found."})
-	
+		
+	else:
+		raise HTTPException (status_code=404, detail = {"error": "Not found."})
+	return current_sales
