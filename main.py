@@ -14,13 +14,13 @@ class albums_entry:
 	ArtistId: str
 
 class customer_data(BaseModel):
-	company: str 
-	address: str 
-	city: str 
-	state: str 
-	country: str 
-	postalcode: str 
-	fax: str 
+	company: str = None
+	address: str = None
+	city: str = None
+	state: str = None
+	country: str = None
+	postalcode: str = None
+	fax: str = None
 
 app = FastAPI()
 
@@ -123,5 +123,5 @@ async def edit_customer(customer_id: int, edit_rq: customer_data):
 		current_command = app.db_connection.execute("SELECT * FROM customers WHERE CustomerId=:customer_id", {"customer_id": customer_id}).fetchone()
 		return current_command
 	else:
-		raise HTTPException (status_code=404, detail= {"error": "Not found."}
+		raise HTTPException (status_code=404, detail= {"error": "Not found."})
 		
