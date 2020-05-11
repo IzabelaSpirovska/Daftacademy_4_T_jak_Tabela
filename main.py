@@ -105,7 +105,8 @@ async def create_album(album_rq: album_data):
 
 		if get_data != None:
 			return JSONResponse (status_code = 201, 
-					     content = {"AlbumId": extract.AlbumId, "Title": extract.Title, "ArtistId": extract.ArtistId})
+					     content = 
+					     {"AlbumId": extract.AlbumId, "Title": extract.Title, "ArtistId": extract.ArtistId})
 				
 	else:
 		raise HTTPException (status_code = 404, detail= {"error": "Not found."})
@@ -122,7 +123,8 @@ async def edit_customer(customer_id: int, edit_rq: customer_data):
 		search = {k: v for k, v in edit_rq.__dict__.items() if v is not None}
 		for key, value in search.items():
 			dummy_key = key.capitalize()
-			sql_command = "UPDATE customers SET " + str(dummy_key) + " = '" + str(value) + "' WHERE CustomerID = " + str(customer_id)
+			sql_command = 
+			"UPDATE customers SET " + str(dummy_key) + " = '" + str(value) + "' WHERE CustomerID = " + str(customer_id)
 			edit = app.db_connection.execute(sql_command)
 			app.db_connection.commit()
 		current_command = app.db_connection.execute("SELECT * FROM customers WHERE CustomerId=:customer_id",
@@ -139,12 +141,14 @@ async def get_sales(category: str):
 	current_sales = None
 	if category == 'customers':
 		current_sales = app.db_connection.execute(
-			"SELECT customers.CustomerId, customers.Email, customers.Phone, ROUND(SUM(invoices.Total),4) as Sum FROM invoices INNER\
-			JOIN customers ON invoices.CustomerId = customers.CustomerId GROUP BY customers.CustomerId ORDER BY Sum DESC").fetchall()
+			"SELECT customers.CustomerId, customers.Email, customers.Phone, ROUND(SUM(invoices.Total),4)\
+			as Sum FROM invoices INNER JOIN customers ON invoices.CustomerId = customers.CustomerId\
+			GROUP BY customers.CustomerId ORDER BY Sum DESC").fetchall()
 		return current_sales
 	elif category == 'genres':
 		current_sales = app.db_connection.execute(
-			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER\
+			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name,\
+			ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER\
 			JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()	
 	else:
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
