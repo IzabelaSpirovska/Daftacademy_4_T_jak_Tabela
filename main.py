@@ -47,7 +47,8 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 async def list_of_objects(page: int = 0, per_page: int = 10):
 	app.db_connection.row_factory = sqlite3.Row 
 	current_tracks = app.db_connection.execute(
-		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId', {page: per_page, offset: per_page * page}).fetchall()
+		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId',
+		{page: per_page, offset: per_page * page}).fetchall()
     	return current_tracks
 '''
 
@@ -72,7 +73,8 @@ async def composers(composer_name: str):
 @app.get('/albums/{album_id}')
 async def read_albums(album_id: int):
 	app.db_connection.row_factory = sqlite3.Row
-	data = app.db_connection.execute("SELECT * FROM albums WHERE AlbumId=:album_id", {"album_id": album_id}).fetchall()
+	data = app.db_connection.execute("SELECT * FROM albums WHERE AlbumId=:album_id",
+					 {"album_id": album_id}).fetchall()
 	return data[0]
 
 @app.post('/albums')
@@ -85,13 +87,15 @@ async def create_album(album_rq: album_data):
 
 	if check_artist != None:
 
-		current_data = app.db_connection.execute("INSERT INTO albums (Title, ArtistId) VALUES (:title, :artistId)", {"title": album_rq.title, "artistId": album_rq.artist_id})
+		current_data = app.db_connection.execute("INSERT INTO albums (Title, ArtistId) VALUES (:title, :artistId)", 
+							 {"title": album_rq.title, "artistId": album_rq.artist_id})
 		app.db_connection.commit()
 		
 
 		new_album_id = current_data.lastrowid
 		app.db_connection.row_factory = sqlite3.Row
-		get_data = app.db_connection.execute("SELECT * FROM albums WHERE AlbumId=:new_album_id", {"new_album_id": new_album_id}).fetchall()
+		get_data = app.db_connection.execute("SELECT * FROM albums WHERE AlbumId=:new_album_id",
+						     {"new_album_id": new_album_id}).fetchall()
 
 		extract = albums_entry()
 		for elem in get_data:
@@ -100,7 +104,8 @@ async def create_album(album_rq: album_data):
 			extract.ArtistId = elem["ArtistId"]
 
 		if get_data != None:
-			return JSONResponse (status_code = 201, content = {"AlbumId": extract.AlbumId, "Title": extract.Title, "ArtistId": extract.ArtistId})
+			return JSONResponse (status_code = 201, 
+					     content = {"AlbumId": extract.AlbumId, "Title": extract.Title, "ArtistId": extract.ArtistId})
 				
 	else:
 		raise HTTPException (status_code = 404, detail= {"error": "Not found."})
@@ -111,7 +116,8 @@ async def create_album(album_rq: album_data):
 async def edit_customer(customer_id: int, edit_rq: customer_data):
 	app.db_connection.row_factory = sqlite3.Row
 
-	check_customer = app.db_connection.execute("SELECT FirstName FROM customers WHERE CustomerId=:customer_id", {"customer_id": customer_id}).fetchone()
+	check_customer = app.db_connection.execute("SELECT FirstName FROM customers WHERE CustomerId=:customer_id",
+						   {"customer_id": customer_id}).fetchone()
 	if check_customer != None:
 		search = {k: v for k, v in edit_rq.__dict__.items() if v is not None}
 		for key, value in search.items():
@@ -119,7 +125,8 @@ async def edit_customer(customer_id: int, edit_rq: customer_data):
 			sql_command = "UPDATE customers SET " + str(dummy_key) + " = '" + str(value) + "' WHERE CustomerID = " + str(customer_id)
 			edit = app.db_connection.execute(sql_command)
 			app.db_connection.commit()
-		current_command = app.db_connection.execute("SELECT * FROM customers WHERE CustomerId=:customer_id", {"customer_id": customer_id}).fetchone()
+		current_command = app.db_connection.execute("SELECT * FROM customers WHERE CustomerId=:customer_id",
+							    {"customer_id": customer_id}).fetchone()
 		return current_command
 	else:
 		raise HTTPException (status_code=404, detail= {"error": "Not found."})
@@ -132,11 +139,13 @@ async def get_sales(category: str):
 	current_sales = None
 	if category == 'customers':
 		current_sales = app.db_connection.execute(
-			"SELECT customers.CustomerId, customers.Email, customers.Phone, ROUND(SUM(invoices.Total),4) as Sum FROM invoices INNER JOIN customers ON invoices.CustomerId = customers.CustomerId GROUP BY customers.CustomerId ORDER BY Sum DESC").fetchall()
+			"SELECT customers.CustomerId, customers.Email, customers.Phone, ROUND(SUM(invoices.Total),4) as Sum FROM invoices INNER\
+			JOIN customers ON invoices.CustomerId = customers.CustomerId GROUP BY customers.CustomerId ORDER BY Sum DESC").fetchall()
 		return current_sales
 	elif category == 'genres':
 		current_sales = app.db_connection.execute(
-			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()	
+			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER\
+			JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()	
 	else:
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
 	return current_sales
