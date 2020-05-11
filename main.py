@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
-'''
+
 class album_data(BaseModel):
 	title: str
 	artist_id: int = 1
@@ -49,7 +49,6 @@ async def list_of_objects(page: int = 0, per_page: int = 10):
 	current_tracks = app.db_connection.execute(
 		'SELECT * FROM tracks LIMIT :page OFFSET :offset ORDER BY TrackId', {page: per_page, offset: per_page * page}).fetchall()
     	return current_tracks
-
 '''
 
 #--- TASK 2 -----------------------------------------------------------
@@ -140,5 +139,4 @@ async def get_sales(category: str):
 			"SELECT (SELECT genres.Name FROM genres WHERE tracks.GenreId=genres.GenreId) as Name, ROUND(SUM(invoice_items.UnitPrice*invoice_items.Quantity),4) as Sum FROM tracks INNER JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId GROUP BY tracks.GenreId ORDER BY Sum DESC").fetchall()	
 	else:
 		raise HTTPException (status_code=404, detail = {"error": "Not found."})
-'''
 	return current_sales
