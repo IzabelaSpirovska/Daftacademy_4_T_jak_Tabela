@@ -1,0 +1,255 @@
+Baza znajdująca się w repozytorium twojej aplikacji, powinna być czystą bazą pobraną z adresu:
+http://www.sqlitetutorial.net/wp-content/uploads/2018/03/chinook.zip
+
+#--- TASK 1 -----------------------------------------------------------
+Utwórz endpoint:
+GET /tracks
+
+który może przyjmować parametry page oraz per_page.
+page - oznacza stronę, którą chcemy wyświetlić - domyślnie 0
+per_page - oznacza liczbę zwracanych wierszy - domyślnie 10
+
+W odpowiedzi z kodem 200, powinna znajdować się lista obiektów wg. przykładu.
+Kolejność obiektów rosnąco wg. TrackId
+
+Success response:
+
+[
+    {
+        "TrackId": int,
+        "Name": str,
+        "AlbumId": int,
+        "MediaTypeId": int,
+        "GenreId": int,
+        "Composer": str,
+        "Milliseconds": int,
+        "Bytes": int,
+        "UnitPrice": float
+    },
+    .
+    .
+    .
+]
+
+#--- TASK 2 -----------------------------------------------------------
+Utwórz endpoint:
+
+GET /tracks/composers/
+
+przyjmujący parametr composer_name, który zwróci listę tytułów (Name) wybranego kompozytora, w kolejności alfabetycznej.
+
+W odpowiedzi z kodem 200, powinna znajdować się lista obiektów wg. przykładu:
+Success response:
+
+[
+    str,
+    .
+    .
+    .
+]
+
+
+W przypadku kiedy nie ma kompozytora o wskazanej nazwie aplikacja zwróci kod 404 oraz informację o przyczynie błędu wg przykładu:
+
+Fail response:
+
+{
+    "detail": {
+        "error": str
+    }
+}
+
+#--- TASK 3 -----------------------------------------------------------
+Utwórz endpointy:
+
+POST /albums
+
+dodający nowy album do tabeli albums. Endpoint musi przyjmować obiekt json. W obiekcie wymagane są pola:
+
+{
+    title: str,
+    artist_id: int
+}
+
+Przed stworzeniem nowego albumu należy upewnić się, że w tabeli artists, istnieje artysta o podanym artist_id.
+W przypadku poprawnego utworzenia albumu aplikacja zwróci kod 201 oraz obiekt wg. poniższego przykładu:
+
+Success response:
+
+{
+    "AlbumId": int,
+    "Title": str,
+    "ArtistId": int
+}
+
+W innej sytuacji zostanie zwrócony kod 404 oraz informacja o przyczynie błędu wg przykładu:
+
+Fail response:
+
+
+{
+    "detail": {
+        "error": str
+    }
+}
+
+
+
+W celu weryfikacji utwórz kolejny endpoint:
+
+
+GET /albums/{album_id}
+
+pozwalający na wyciągnięcie utworzonego wcześniej albumu z tabeli albums.
+
+Aplikacja w odpowiedzi razem z kodem 200 zwróci obiekt wg. przykładu.
+
+Success response:
+
+{
+    "AlbumId": int,
+    "Title": str,
+    "ArtistId": int
+}
+
+#--- TASK 4 -----------------------------------------------------------
+Utwórz endpoint
+
+PUT /customers/{customer_id}
+
+
+który pozwoli na edycję danych dotyczących klientów. Endpoint musi mieć możliwość przyjęcia obiektu json z następującymi polami:
+
+{
+    company: str
+    address: str
+    city: str
+    state: str
+    country: str
+    postalcode: str
+    fax: str
+}
+
+Nie ma obowiązku wypełniania wszystkich pól. W przypadku kiedy chcemy zmienić tylko cześć danych
+np. city oraz fax wystarczy, przesłać następujący obiekt:
+
+{
+    city: str,
+    fax: str
+}
+
+inne dane nie ulegną zmianie.
+
+Musimy upewnić się że klient o podanym id istnieje w tabeli clients. W odpowiedzi aplikacja wraz z kodem 200 zwróci obiekt klienta wg poniższego przykładu:
+
+Success response
+
+{
+    "CustomerId": int,
+    "FirstName": str,
+    "LastName": str,
+    "Company": str,
+    "Address": str,
+    "City": str,
+    "State": str,
+    "Country": str,
+    "PostalCode": str,
+    "Phone": str,
+    "Fax": str,
+    "Email": str,
+    "SupportRepId": int,
+}
+
+W przypadku kiedy klienta o podanym id nie ma w bazie, zostanie zwrócona odpowiedz z kodem 404 o następującej budowie:
+
+Fail response:
+
+{
+    "detail": {
+        "error": str
+    }
+}
+
+#--- TASK 5 -----------------------------------------------------------
+Utwórz endpoint
+
+GET /sales
+
+
+który będzie odpowiedzialny za zwracanie statystyk. Będzie on przyjmował parametr category. 
+
+Parametr ?category=customers zwróci statystykę wydatków poszczególnych klientów sklepu, wraz z ich numerem id, adresem email i numerem telefonu, RODO rules ;) .
+
+
+Wyniki mają być filtrowane po sumie wydatków od największych oraz po numerze id klienta.
+
+Suma powinna być zaokrąglona do 2-ch miejsc po przecinku.
+
+W przypadku braku statystyki o wskazanym category aplikacja zwróci kod 404 i informację o błędzie wg poniżsego przykładu:
+
+
+Fail response:
+
+{
+    "detail": {
+        "error": str
+    }
+}
+
+
+W przypadku prawidłowego wykonania zapytania aplikacja zwróci kod 200 oraz odpowiedź wg poniższego przykładu:
+
+Success response:
+
+[
+    {
+        "CustomerId": int,
+        "Email": str,
+        "Phone": str,
+        "Sum": float
+    },
+    .
+    .
+    .
+]
+
+#--- TASK 6 -----------------------------------------------------------
+Utwórz endpoint
+
+GET /sales
+
+który będzie odpowiedzialny za zwracanie statystyk. Będzie on przyjmował parametr category. 
+
+parametr ?category=genres zwróci statystykę łącznej liczby sprzedanych utworów w poszczególnych gatunkach muzycznych.
+
+Wynik ma być posortowany w kolejności od najlepiej sprzedającego się gatunku oraz po nazwie.
+
+W przypadku prawidłowego wykonania zapytania aplikacja zwróci kod 200
+
+Wynik powinien być listą obiektów wg. poniższego przykładu.  gdzie: 
+
+Name - nazwa gatunku muzycznego z tabeli genres 
+Sum - suma, sztuk, wszystkich sprzedanych utworów w danym gatunku z tabeli invoice_items
+
+Success response:
+
+[
+    {
+        "Name": str,
+        "Sum": int
+    },
+    .
+    .
+    .
+]
+
+
+W przypadku braku statystyki o wskazanym category aplikacja zwróci kod 404 i informację wg poniżsego przykładu:
+
+Fail response:
+
+{
+    "detail": {
+        "error": str
+    }
+}
